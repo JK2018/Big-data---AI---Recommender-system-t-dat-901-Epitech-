@@ -64,7 +64,6 @@ def get_nb_unique_clients(dataframe):
     return dataframe['CLI_ID'].nunique()
 
 
-# TODO: create function to check all null values for all columns
 def get_null_values(dataframe):
     """
     Take dataframe and check null values
