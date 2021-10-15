@@ -6,15 +6,30 @@ import numpy as np
 
 
 def get_nb_clients(dataframe):
-    pass
+    """
+    Take dataframe 
+    Return number of unique clients
+    """
+    total_clients = dataframe['CLI_ID'].nunique()
+    return total_clients
 
 
 def get_avg_product_price(dataframe):
-    pass
+    """
+    Take dataframe 
+    Return average price of products
+    """
+    avg_product_price = dataframe['PRIX_NET'].mean()
+    return avg_product_price
 
 
 def get_total_sales(dataframe):
-    pass
+    """
+    Take dataframe 
+    Return sum of all sold products
+    """
+    grand_total_sales = dataframe['PRIX_NET'].sum()
+    return grand_total_sales
 
 
 def get_nb_unique_libelle(dataframe):
@@ -129,35 +144,98 @@ def get_mean_product_price_per_univers(dataframe):
 
 
 def get_nb_unique_libelle_per_maille(dataframe):
-    pass
+    """
+    Take dataframe
+    Return number of unique products for each different MAILLE
+    """
+    u = dataframe.groupby(['MAILLE']).nunique()
+    nb_products_per_maille = u[['LIBELLE']]
+    nb_products_per_maille.rename(columns={'LIBELLE': 'NB_DIFF_LIBELLE'}, inplace=True)
+    return nb_products_per_maille
+    
 
 
 def get_nb_unique_libelle_per_famille(dataframe):
-    pass
+    """
+    Take dataframe
+    Return number of unique products for each different FAMILLE
+    """
+    uu = dataframe.groupby(['FAMILLE']).nunique()
+    nb_products_per_famille = uu[['LIBELLE']]
+    nb_products_per_famille.rename(columns={'LIBELLE': 'NB_DIFF_LIBELLE'}, inplace=True)
+    return nb_products_per_famille
 
 
 def get_nb_unique_libelle_per_univers(dataframe):
-    pass
+    """
+    Take dataframe
+    Return number of unique products for each different UNIVERS
+    """
+    uuu = dataframe.groupby(['UNIVERS']).nunique()
+    nb_products_per_univers = uuu[['LIBELLE']]
+    nb_products_per_univers.rename(columns={'LIBELLE': 'NB_DIFF_LIBELLE'}, inplace=True)
+    return nb_products_per_univers
 
 
 def get_standard_deviation_nb_products_per_client(dataframe):
-    pass
+    """
+    Take dataframe
+    Return standard deviation of number of products baught per client
+    """
+    w = dataframe.groupby(['CLI_ID']).count()
+    std_nb_items_bought_per_client = w['PRIX_NET'].std()
+    return std_nb_items_bought_per_client
 
 
 def get_avg_nb_products_per_client(dataframe):
-    pass
+    """
+    Take dataframe
+    Return mean number of products bought per client
+    """
+    w = dataframe.groupby(['CLI_ID']).count()
+    avg_nb_items_bought_per_client = w['PRIX_NET'].mean()
+    return avg_nb_items_bought_per_client
+
+
 
 
 def get_avg_total_expenses_per_client(dataframe):
-    pass
+    """
+    Take dataframe
+    Return mean price spent by clients
+    """
+    z = dataframe.groupby(['CLI_ID']).sum()
+    avg_client_expenses = z['PRIX_NET'].mean()
+    return avg_client_expenses
 
 
 def get_avg_ticket_price(dataframe):
-    pass
+    """
+    Take dataframe
+    Return mean price spent per cart
+    """
+    x = dataframe.groupby(['CLI_ID','TICKET_ID','MOIS_VENTE']).sum()
+    avg_ticket_price = x['PRIX_NET'].mean()
+    return avg_ticket_price
 
 
 def get_avg_nb_product_per_ticket(dataframe):
-    pass
+    """
+    Take dataframe
+    Return mean number products per cart
+    """
+    y = dataframe.groupby(['CLI_ID','TICKET_ID','MOIS_VENTE']).count()
+    avg_ticket_nb_products = y['PRIX_NET'].mean()
+    return avg_ticket_nb_products
+
+
+def get_top_ten_most_sold_products(dataframe):
+    """
+    Take dataframe
+    Return 10 most sold products
+    """
+    most_sold_items = data['LIBELLE'].value_counts()
+    return most_sold_items[:10]
 
 
 def get_all_products(dataframe):
