@@ -1,7 +1,6 @@
 import os
 import sys
 import pandas as pd
-import pandas as pd
 import math
 import pprint
 
@@ -77,15 +76,6 @@ class User:
             gender_supposition = 'UNKNOWN'
         return gender_supposition
 
-
-
-
-
-
-
-dataframe = pd.read_csv('/Users/jonathankhalifa/Desktop/T-DAT-901/KaDo.csv')
-x = User(dataframe, '997385337')
-print(x.get_user_id)
 
 
 
