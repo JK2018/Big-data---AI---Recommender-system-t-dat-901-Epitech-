@@ -101,6 +101,7 @@ function App(props) {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
+          backgroundColor: "#F5F5F5"
         }}
       >
         {currentTab === 0 && <Shop></Shop>}

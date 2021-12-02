@@ -18,10 +18,16 @@ const CustomCard = props => {
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '1 0 auto' }}>
                 <Typography component="div" variant="h5">
-                    Nbre de clients : 150
+                    Resume
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary" component="div">
                     Nbre de clients : 150
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary" component="div">
+                    Prix moyen des articles : 150
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary" component="div">
+                    Total des ventes : 150
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary" component="div">
                     {props.children}
