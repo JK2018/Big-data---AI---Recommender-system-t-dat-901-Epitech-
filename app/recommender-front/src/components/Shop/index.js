@@ -2,6 +2,7 @@ import React from "react";
 import Grid from '@mui/material/Grid';
 import CustomCard from "../Utils/CustomCard";
 import StackGrid from "react-stack-grid";
+import FamsGroup from "../Utils/FamsGroup";
 
 
 
@@ -30,6 +31,7 @@ const Shop = () => {
         <div key="key4"><CustomCard /></div>
         <div key="key5"><CustomCard /></div>
         <div key="key6"><CustomCard /></div>
+        <div key="key7"><FamsGroup /></div>
     </StackGrid>
     </>
   );
