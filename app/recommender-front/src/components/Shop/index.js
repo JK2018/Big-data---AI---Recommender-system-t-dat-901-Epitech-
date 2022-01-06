@@ -16,24 +16,21 @@ const Shop = () => {
         // gutterWidth={15}
         // gutterHeight={15}
       >
-        <div key="key1"><CustomCard /></div>
-        <div key="key2"><Piechart /></div>
-        <div key="key3"><CustomCard >
-          hdhvaahzvdahzvdhazvdhzvada
-          hdhvaahzvdahzvdhazvdhzvada
-          hdhvaahzvdahzvdhazvdhzvada
-          hdhvaahzvdahzvdhazvdhzvada
-          hdhvaahzvdahzvdhazvdhzvada
-          hdhvaahzvdahzvdhazvdhzvada
-          hdhvaahzvdahzvdhazvdhzvada
-          hdhvaahzvdahzvdhazvdhzvada
-          hdhvaahzvdahzvdhazvdhzvada
-          </CustomCard></div>
+        <div key="key1"><FamsGroup /></div>
+        <div key="key2"><CustomCard 
+        nbreA="👫 Nbre de clients : 20"
+        nbreB="📚 Prix moyen des articles : 150"
+        nbreC="💰Total des ventes : 150"/></div>
+        <div key="key3"><CustomCard 
+        nbreA="👫 Nbre de clients : 20"
+        nbreB="📚 Prix moyen des articles : 150"
+        nbreC="💰Total des ventes : 150"/></div>
         <div key="key4"><CustomCard /></div>
-        <div key="key5"><CustomCard /></div>
+        <div key="key5"><Piechart /></div>
         <div key="key6"><CustomCard /></div>
-        <div key="key7"><FamsGroup /></div>
+        <div key="key7"><CustomCard /></div>
         <div key="key8"><CustomCard /></div>
+        <div key="key9"><CustomCard /></div>
     </StackGrid>
     </>
   );

@@ -9,8 +9,10 @@ import styled from 'styled-components'
 
 const TabContextDiv =  styled.div`
     /*width: 500px;
-    height: 500px;
-    background-color: red;*/
+    height: 500px;*/
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    border-radius: 4px;
+    background-color: #fff;
 `
 
 const FamsGroup = props => {
@@ -39,9 +41,27 @@ const FamsGroup = props => {
                 <Tab label="Univers" value="3" />
                 </TabList>
             </Box>
-            <TabPanel value="1">Item One</TabPanel>
-            <TabPanel value="2">Item Two</TabPanel>
-            <TabPanel value="3">Item Three</TabPanel>
+            <TabPanel value="1">
+                <ul>
+                    <li>Nombre total : 54</li>
+                    <li>Sous categories : 134</li>
+                    <li>Utilisateurs : 250</li>
+                </ul>
+            </TabPanel>
+            <TabPanel value="2">
+                <ul>
+                    <li>Nombre total : 43</li>
+                    <li>Sous categories : 122</li>
+                    <li>Utilisateurs : 34</li>
+                </ul>
+            </TabPanel>
+            <TabPanel value="3">
+                <ul>
+                    <li>Nombre total : 10</li>
+                    <li>Sous categories : 22</li>
+                    <li>Utilisateurs : 68</li>
+                </ul>
+            </TabPanel>
             </TabContext>
         </TabContextDiv>
     )
