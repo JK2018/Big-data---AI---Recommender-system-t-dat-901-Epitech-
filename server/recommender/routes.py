@@ -1,5 +1,5 @@
 from recommender import app, request, jsonify
-from recommender.client import *
+from server.recommender.store import *
 
 # La route pour envoyer la liste des ID client
 
@@ -8,7 +8,7 @@ from recommender.client import *
 def index():
     return '/'
 
-
+# Copié ce systeme pour le user
 @app.route('/getTop10QuantityObject', methods=['GET'])
 def getClientsId():
     return jsonify(getTop10QuantityObject())
