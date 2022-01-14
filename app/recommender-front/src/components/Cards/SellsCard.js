@@ -21,7 +21,7 @@ const SellsCard = () => {
 
   return (
     <CustomCard title={"ventes"}>
-      <Typography variant="subtitle1" color="text.secondary" component="div">
+      {/* <Typography variant="subtitle1" color="text.secondary" component="div">
         Nombre de client total: {data.totalNbClients}
       </Typography>
       <Typography variant="subtitle1" color="text.secondary" component="div">
@@ -33,7 +33,7 @@ const SellsCard = () => {
       </Typography>
       <Typography variant="subtitle1" color="text.secondary" component="div">
         Prix moyen d'un ticket : {Math.round(data.avgTicketPrice)}
-      </Typography>
+      </Typography> */}
     </CustomCard>
   );
 };

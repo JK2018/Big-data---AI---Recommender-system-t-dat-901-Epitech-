@@ -1,5 +1,5 @@
 from recommender import app, request, jsonify
-from server.recommender.store import *
+from recommender.store import *
 
 # La route pour envoyer la liste des ID client
 
@@ -9,12 +9,14 @@ def index():
     return '/'
 
 # Copié ce systeme pour le user
-@app.route('/getTop10QuantityObject', methods=['GET'])
-def getClientsId():
-    return jsonify(getTop10QuantityObject())
 
 
-@app.route('/getClients', methods=['POST'])
-@app.route('/getSellsInformations')
-def getSellsInformations():
-    info = {}
+@app.route('/getStoreInfos', methods=['GET'])
+def getStore():
+    return jsonify(getStoreInfos())
+
+
+# @app.route('/getClients', methods=['POST'])
+# @app.route('/getSellsInformations')
+# def getSellsInformations():
+#     info = {}

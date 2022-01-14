@@ -33,7 +33,7 @@ function App(props) {
 
       <Divider />
       <List>
-        {["Shop", "Client"].map((text, index) => (
+        {["Magasin", "Clients"].map((text, index) => (
           <ListItem button key={text} onClick={() => setCurrentTab(index)}>
             <ListItemIcon>
               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
