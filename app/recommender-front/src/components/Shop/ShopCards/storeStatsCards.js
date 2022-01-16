@@ -9,30 +9,31 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import styled from "styled-components";
 
-// avgQtyItemsBoughtPerClient: 8.489048802948751;
-// avgQtyItemsPerTicket: 2.6493393948679285;
-// avgTicketPrice: 15.816777713911513;
-// itemPriceAvg: 5.97008361580822;
-// nbDiffItems: 1484;
-
 const LinesWithNumber = styled.div`
   display: flex;
   justify-content: space-between;
 `;
 
+const BlockContent = styled.div`
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+  padding: 20px;
+`;
+
 const StoreStatsCards = ({ data = {} }) => {
   return (
     <Grid item xs={12}>
-      <Grid container spacing={3}>
-        <Grid item xs={3}>
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item xs={12} sm={6} md={6}>
           <Paper
             style={{
               width: "100%",
-              height: 128,
+              height: "100%",
             }}
           >
             {/* A améliorer */}
-            <div style={{ padding: "20px" }}>
+            <BlockContent>
               <LinesWithNumber>
                 <Typography sx={{ fontWeight: "bold" }}>
                   Total de client :
@@ -43,44 +44,70 @@ const StoreStatsCards = ({ data = {} }) => {
                 <Typography>Dépense moy. par client :</Typography>
                 <div>{Math.round(data.clientsSpendOnAvg * 100) / 100} €</div>
               </LinesWithNumber>
-            </div>
+            </BlockContent>
           </Paper>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={6}>
           <Paper
             style={{
               width: "100%",
-              height: 128,
+              height: "100%",
             }}
           >
-            <div style={{ padding: "20px" }}>
+            <BlockContent>
               <LinesWithNumber>
                 <Typography sx={{ fontWeight: "bold" }}>
                   Ventes totales :
                 </Typography>
                 <div>{Math.round(data.totalSales)}</div>
               </LinesWithNumber>
-            </div>
+            </BlockContent>
           </Paper>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={6}>
           <Paper
             style={{
               width: "100%",
-              height: 128,
+              height: "100%",
             }}
           >
-            TEST 1
+            <BlockContent>
+              <LinesWithNumber>
+                <Typography sx={{ fontWeight: "bold" }}>
+                  Nombre d'objet en stock :
+                </Typography>
+                <div>{data.nbDiffItems}</div>
+              </LinesWithNumber>
+              <LinesWithNumber>
+                <Typography>Prix moyen par objet :</Typography>
+                <div>{Math.round(data.itemPriceAvg * 100) / 100} €</div>
+              </LinesWithNumber>
+            </BlockContent>
           </Paper>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={6}>
           <Paper
             style={{
               width: "100%",
-              height: 128,
+              height: "100%",
             }}
           >
-            TEST 1
+            <BlockContent>
+              <LinesWithNumber>
+                <Typography sx={{ fontWeight: "bold" }}>
+                  Prix moyen d'un ticket :
+                </Typography>
+                <div>{Math.round(data.avgTicketPrice * 100) / 100} €</div>
+              </LinesWithNumber>
+              <LinesWithNumber>
+                <Typography>Nombre d'objet moy./ticket :</Typography>
+                <div>{Math.round(data.avgQtyItemsPerTicket)}</div>
+              </LinesWithNumber>
+              <LinesWithNumber>
+                <Typography>Moyenne de produit acheté/client :</Typography>
+                <div>{Math.round(data.avgQtyItemsBoughtPerClient)}</div>
+              </LinesWithNumber>
+            </BlockContent>
           </Paper>
         </Grid>
       </Grid>

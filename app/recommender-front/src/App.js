@@ -98,6 +98,7 @@ function App(props) {
           sx={{
             flexGrow: 1,
             p: 3,
+            height: "100%",
             width: { sm: `calc(100% - ${drawerWidth}px)` },
             backgroundColor: "#F5F5F5",
           }}

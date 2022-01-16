@@ -19,23 +19,7 @@ const SellsCard = () => {
       });
   }, []);
 
-  return (
-    <CustomCard title={"ventes"}>
-      {/* <Typography variant="subtitle1" color="text.secondary" component="div">
-        Nombre de client total: {data.totalNbClients}
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary" component="div">
-        Total des ventes total : {Math.round(data.totalSales * 100) / 100} $
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary" component="div">
-        Nombre de produit moyen par panier :{" "}
-        {Math.round(data.avgQtyItemsPerTicket)}
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary" component="div">
-        Prix moyen d'un ticket : {Math.round(data.avgTicketPrice)}
-      </Typography> */}
-    </CustomCard>
-  );
+  return <CustomCard title={"ventes"}></CustomCard>;
 };
 
 export default SellsCard;

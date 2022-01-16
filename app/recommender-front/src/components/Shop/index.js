@@ -1,12 +1,16 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import CustomCard from "../Utils/CustomCard";
-import StackGrid from "react-stack-grid";
-import FamsGroup from "../Utils/FamsGroup";
-import Piechart from "../Utils/Piechart";
+// import StackGrid from "react-stack-grid";
+// import FamsGroup from "../Utils/FamsGroup";
 import axios from "axios";
 
-import { StoreStatsCards } from "./ShopCards";
+import {
+  StoreStatsCards,
+  Chart,
+  CategorySelect,
+  RoundChart,
+} from "./ShopCards";
 
 const Shop = () => {
   const [data, setData] = React.useState({});
@@ -30,12 +34,25 @@ const Shop = () => {
       <p style={{ marginBottom: "0", textTransform: "uppercase" }}>Dashboard</p>
       <h1 style={{ marginTop: "0" }}>Mon magasin</h1>
       <Grid container spacing={2}>
-        <StoreStatsCards data={data.store_informations} />
-        <Grid item xs={4}>
-          <CustomCard />
+        {data && <StoreStatsCards data={data.store_informations} />}
+        <Grid item xs={12} sm={12} md={12}>
+          {data.sells_nbtickets_by_month && (
+            <Chart data={data.sells_nbtickets_by_month} />
+          )}
         </Grid>
-        <Grid item xs={4}>
-          <CustomCard />
+        <Grid item xs={12} sm={12} md={5}>
+          {data.infos_by_family && (
+            <CategorySelect
+              data={{
+                infos_by_family: data.infos_by_family,
+                infos_by_mailles: data.infos_by_mailles,
+                infos_by_univers: data.infos_by_univers,
+              }}
+            />
+          )}
+        </Grid>
+        <Grid item xs={12} sm={12} md={7} alignItems="stretch">
+          <RoundChart />
         </Grid>
         <Grid item xs={8}>
           <CustomCard />
