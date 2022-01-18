@@ -52,11 +52,11 @@ const Shop = () => {
           )}
         </Grid>
         <Grid item xs={12} sm={12} md={7} alignItems="stretch">
-          <RoundChart />
+          {data.libelle_sell_by_month && (
+            <RoundChart data={data.libelle_sell_by_month} />
+          )}
         </Grid>
-        <Grid item xs={8}>
-          <CustomCard />
-        </Grid>
+        <Grid item xs={8}></Grid>
       </Grid>
       {/* <StackGrid
         //columnWidth={width <= 768 ? '100%' : '33.33%'}

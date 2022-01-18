@@ -12,60 +12,96 @@ import {
 } from "recharts";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
+import styled from "styled-components";
 
-const data = [
-  {
-    name: "Page A",
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: "Page B",
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: "Page C",
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: "Page D",
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: "Page E",
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: "Page F",
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: "Page G",
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
+const DefaultTooltip = styled.div`
+  margin: 0px;
+  padding: 10px;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(204, 204, 204);
+  white-space: nowrap;
+
+  p {
+    margin: 0;
+  }
+
+  ul {
+    padding: 0px;
+    margin: 0px;
+    li {
+      display: block;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      color: rgb(136, 132, 216);
+    }
+  }
+`;
+
+const month = [
+  "Jan",
+  "Fév",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Aout",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Déc",
 ];
-const RoundChart = () => {
+
+const getIntroOfPage = (label) => {
+  if (label === "Jan") {
+    return "Page A is about men's clothing";
+  }
+
+  return "";
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+  console.log(payload);
+  if (active && payload && payload.length) {
+    return (
+      <DefaultTooltip>
+        <p className="label">{`${payload[0].payload.libelle}`}</p>
+        <ul>
+          <li>Quantité vendue : {payload[0].payload.quantity}</li>
+        </ul>
+      </DefaultTooltip>
+    );
+  }
+
+  return null;
+};
+
+const RoundChart = ({ data }) => {
+  console.log(data);
+  const [chartData, setChartData] = React.useState({});
+
+  React.useEffect(() => {
+    const newData = month.map((month, index) => {
+      return {
+        name: month,
+        quantity: data.QTY[index],
+        libelle: data.LIBELLE[index],
+      };
+    });
+    setChartData(newData);
+    console.log("round: ", newData);
+  }, []);
+
   return (
     <Paper style={{ padding: "20px" }}>
-      <h3 style={{ marginTop: "0px" }}>Aperçu de l'année</h3>
+      <h3 style={{ marginTop: "0px" }}>Meilleure vente/mois</h3>
       <Box sx={{ paddingTop: "20px", height: "300px" }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
-            <Bar dataKey="uv" fill="#8884d8" />
-            <Tooltip />
+          <BarChart data={chartData}>
+            <Bar dataKey="quantity" fill="#8884d8" />
+            <Tooltip content={<CustomTooltip />} />
+            {/* <Tooltip /> */}
+            <XAxis dataKey="name" />
           </BarChart>
         </ResponsiveContainer>
       </Box>
