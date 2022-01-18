@@ -1,0 +1,158 @@
+import pandas as pd
+import json
+from recommender.database import storeStats, ObjectId, clientStats, itemStats, clientCol
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import CountVectorizer
+
+def getTop10QuantityObject():
+    objInstance = ObjectId("61a176352e90743f7b15c073")
+    result = storeStats.find_one({"_id": objInstance})
+    del result["_id"]
+    print(result)
+    return result
+
+def getUserData2 (user_id):
+    print("userId2 : "+user_id)
+    cursor = clientStats.find_one({'CLI_ID.0': user_id})
+    resultDf = pd.DataFrame(cursor) 
+    
+    
+    
+    result = {}
+    resultDf['PRIX_NET'] = resultDf['PRIX_NET'].apply(float)
+    resultDf['TICKET_ID'] = resultDf['TICKET_ID'].apply(int)
+    user_tickets = resultDf['TICKET_ID'].unique()
+    cart_tot = resultDf.groupby("TICKET_ID").sum()
+    #return cart_tot
+    result['cli_id'] = user_id
+    
+    result['ticket_ids'] = user_tickets
+
+    nb_tot_paniers = len(user_tickets)
+    result['nb_tot_paniers'] = nb_tot_paniers
+
+    total_depenses = resultDf['PRIX_NET'].sum()
+    result['total_depenses'] = total_depenses # "%.2f" %
+
+    prix_panier_max = cart_tot['PRIX_NET'].max()
+    result['prix_panier_max'] = prix_panier_max
+
+    prix_panier_min = cart_tot['PRIX_NET'].min()
+    result['prix_panier_min'] = prix_panier_min
+
+    prix_article_achete_max = resultDf['PRIX_NET'].max()
+    result['prix_article_achete_max'] = prix_article_achete_max
+
+    depenses_par_moi = resultDf[['MOIS_VENTE', 'PRIX_NET']].groupby("MOIS_VENTE").sum()
+    result['depenses_par_moi'] = depenses_par_moi
+
+    prix_panier_moy = cart_tot['PRIX_NET'].mean()
+    result['prix_panier_moy'] = "%.2f" % prix_panier_moy
+
+    nb_paniers_par_moi = resultDf[['MOIS_VENTE', 'TICKET_ID']].groupby("MOIS_VENTE").nunique()
+    nb_paniers_par_moi.drop(nb_paniers_par_moi.columns[0], axis=1, inplace=True)
+    result['nb_paniers_par_moi'] = nb_paniers_par_moi
+
+    top_ten_produits_achetes = resultDf['LIBELLE'].value_counts()
+    result['top_ten_produits_achetes'] = top_ten_produits_achetes
+
+    top_maille_achetes = resultDf['MAILLE'].value_counts()
+    result['top_maille_achetes'] = top_maille_achetes
+
+    top_famille_achetes = resultDf['FAMILLE'].value_counts()
+    result['top_famille_achetes'] = top_famille_achetes
+
+    top_univers_achetes = resultDf['UNIVERS'].value_counts()
+    result['top_univers_achetes'] = top_univers_achetes
+    
+    if top_famille_achetes.max() == top_famille_achetes.get('MAQUILLAGE'):
+        gender_supposition = 'FEMALE'
+    elif top_famille_achetes.get('MAQUILLAGE') == 'None':
+        gender_supposition = 'MALE'
+    else:
+        gender_supposition = 'UNKNOWN'
+    result['gender_supposition'] = gender_supposition
+    
+    print(result)
+
+    return result
+
+
+
+def getUserRecommendations(userID):
+    '''
+    IN: client id
+    OUT: top 3 recommended items
+    INFO: recommends the most similar item for each of the 3 most purchased items from
+          this client. If client purchaseed less than 3 items then it ll recommend similar items 
+          to the one he has already bought.
+    '''
+    
+    # fetch items data from db and set to dataframe
+    cursor = itemStats.find({})
+    fields = ['PRIX_NET', 'FAMILLE', 'LIBELLE', 'UNIVERS', 'MAILLE', 'PROD_ID', 'PRIX_CAT']
+    items_data = pd.DataFrame(list(cursor), columns = fields)
+
+
+    # remove unecessary columns
+    items_data2 = items_data.copy()
+    items_data2['TEXT']= items_data2['LIBELLE']+' '+items_data2['MAILLE']+' '+items_data2['UNIVERS']+' '+items_data2['FAMILLE']
+    items_data2.drop('LIBELLE', axis=1, inplace=True)
+    items_data2.drop('MAILLE', axis=1, inplace=True)
+    items_data2.drop('UNIVERS', axis=1, inplace=True)
+    items_data2.drop('FAMILLE', axis=1, inplace=True)
+    items_data2.drop('PRIX_NET', axis=1, inplace=True)
+
+    
+    
+    count = CountVectorizer()
+    count_matrix = count.fit_transform(items_data2['TEXT'])
+    cosine_sim = cosine_similarity(count_matrix, count_matrix)
+    indices = pd.Series(items_data2['PROD_ID'])
+
+    print("step1 : ",indices)
+
+    def recommend(prod, cosine_sim = cosine_sim):
+        recommended_prods = []
+        idx = indices[indices == prod].index[0]
+        score_series = pd.Series(cosine_sim[idx]).sort_values(ascending = False)
+        top_15_indices = list(score_series.iloc[1:16].index)
+        for i in top_15_indices:
+            recommended_prods.append(list(items_data2['PROD_ID'])[i])
+
+        return recommended_prods
+
+
+    query={"CLI_ID":userID}
+    cursor= clientCol.find(query)
+    fields = ['CLI_ID', 'PROD_ID', 'QTY', 'RATING']
+    purchases = pd.DataFrame(list(cursor), columns = fields)
+
+    print("step2 : ",purchases)
+    
+    
+    #purchases = client_data.loc[client_data['CLI_ID'] == userID] # request DB here
+    p_series = pd.Series(purchases['PROD_ID'])
+    topThree = purchases.head(3)
+    results = []
+    for index, row in topThree.iterrows():
+        a = recommend(row['PROD_ID'])
+
+        for index, value in p_series.items():
+            if value in a:
+                a.remove(value)
+        results.append(a)
+        
+    if len(results)==1:
+        return results[0][:3]
+    
+    if len(results)==2:
+        return results[0][:2] + results[1][:1]
+    
+    if len(results)==3:
+        return results[0][:1] + results[1][:1] + results[2][:1]
+
+    return results
+        
+    
+    
