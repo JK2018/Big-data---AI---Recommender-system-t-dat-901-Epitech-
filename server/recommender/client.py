@@ -26,8 +26,8 @@ def getUserData2 (user_id):
     #return cart_tot
     result['cli_id'] = user_id
     
-    result['ticket_ids'] = user_tickets
-
+    result['ticket_ids'] = int(user_tickets[0])
+    
     nb_tot_paniers = len(user_tickets)
     result['nb_tot_paniers'] = nb_tot_paniers
 
@@ -44,26 +44,26 @@ def getUserData2 (user_id):
     result['prix_article_achete_max'] = prix_article_achete_max
 
     depenses_par_moi = resultDf[['MOIS_VENTE', 'PRIX_NET']].groupby("MOIS_VENTE").sum()
-    result['depenses_par_moi'] = depenses_par_moi
+    result['depenses_par_moi'] = depenses_par_moi.to_json()
 
     prix_panier_moy = cart_tot['PRIX_NET'].mean()
     result['prix_panier_moy'] = "%.2f" % prix_panier_moy
 
     nb_paniers_par_moi = resultDf[['MOIS_VENTE', 'TICKET_ID']].groupby("MOIS_VENTE").nunique()
     nb_paniers_par_moi.drop(nb_paniers_par_moi.columns[0], axis=1, inplace=True)
-    result['nb_paniers_par_moi'] = nb_paniers_par_moi
+    result['nb_paniers_par_moi'] = nb_paniers_par_moi.to_json()
 
     top_ten_produits_achetes = resultDf['LIBELLE'].value_counts()
-    result['top_ten_produits_achetes'] = top_ten_produits_achetes
+    result['top_ten_produits_achetes'] = top_ten_produits_achetes.to_json()
 
     top_maille_achetes = resultDf['MAILLE'].value_counts()
-    result['top_maille_achetes'] = top_maille_achetes
+    result['top_maille_achetes'] = top_maille_achetes.to_json()
 
     top_famille_achetes = resultDf['FAMILLE'].value_counts()
-    result['top_famille_achetes'] = top_famille_achetes
+    result['top_famille_achetes'] = top_famille_achetes.to_json()
 
     top_univers_achetes = resultDf['UNIVERS'].value_counts()
-    result['top_univers_achetes'] = top_univers_achetes
+    result['top_univers_achetes'] = top_univers_achetes.to_json()
     
     if top_famille_achetes.max() == top_famille_achetes.get('MAQUILLAGE'):
         gender_supposition = 'FEMALE'
@@ -93,6 +93,8 @@ def getUserRecommendations(userID):
     fields = ['PRIX_NET', 'FAMILLE', 'LIBELLE', 'UNIVERS', 'MAILLE', 'PROD_ID', 'PRIX_CAT']
     items_data = pd.DataFrame(list(cursor), columns = fields)
 
+    #print("step1 : ",items_data)
+
 
     # remove unecessary columns
     items_data2 = items_data.copy()
@@ -110,7 +112,7 @@ def getUserRecommendations(userID):
     cosine_sim = cosine_similarity(count_matrix, count_matrix)
     indices = pd.Series(items_data2['PROD_ID'])
 
-    print("step1 : ",indices)
+    #print("step1 : ",indices)
 
     def recommend(prod, cosine_sim = cosine_sim):
         recommended_prods = []
@@ -123,12 +125,11 @@ def getUserRecommendations(userID):
         return recommended_prods
 
 
-    query={"CLI_ID":userID}
-    cursor= clientCol.find(query)
-    fields = ['CLI_ID', 'PROD_ID', 'QTY', 'RATING']
-    purchases = pd.DataFrame(list(cursor), columns = fields)
-
-    print("step2 : ",purchases)
+    query2={"CLI_ID":int(userID)}
+    cursor2= clientCol.find(query2)
+    fields2 = ['CLI_ID', 'PROD_ID', 'QTY', 'RATING']
+    purchases = pd.DataFrame(list(cursor2), columns = fields2)
+    #print("step2 : ",purchases)
     
     
     #purchases = client_data.loc[client_data['CLI_ID'] == userID] # request DB here
@@ -152,7 +153,10 @@ def getUserRecommendations(userID):
     if len(results)==3:
         return results[0][:1] + results[1][:1] + results[2][:1]
 
+    print("results ",results)
+
     return results
+
         
     
     
