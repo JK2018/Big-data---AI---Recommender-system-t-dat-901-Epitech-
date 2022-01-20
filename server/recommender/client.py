@@ -4,6 +4,7 @@ from recommender.database import storeStats, ObjectId, clientStats, itemStats, c
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 
+
 def getTop10QuantityObject():
     objInstance = ObjectId("61a176352e90743f7b15c073")
     result = storeStats.find_one({"_id": objInstance})
@@ -11,8 +12,15 @@ def getTop10QuantityObject():
     print(result)
     return result
 
+def getProduct(product_id):
+    cursor = itemStats.find_one({'PROD_ID.0': product_id})
+    items_data = pd.DataFrame(list(cursor))
+
+    return items_data
+
+
 def getUserData2 (user_id):
-    print("userId2 : "+user_id)
+    print("userId2 : "+str(user_id))
     cursor = clientStats.find_one({'CLI_ID.0': user_id})
     resultDf = pd.DataFrame(cursor) 
     
@@ -78,6 +86,44 @@ def getUserData2 (user_id):
     return result
 
 
+def get_recommendation_accuracy(recommendations, purchases):
+    """Takes the list of products recommended by the application, and
+    compares each one with the categories already purchased by the
+    customer.
+
+    Args:
+        recommendations (List<LIBELLE>): List of product names
+        cli_id (CLI_ID): client id
+
+    Returns:
+        Dict: LIBELLE as keys and string message as values
+    """
+    categories_purchased = []
+    for product in purchases:
+        if product.maille not in categories_purchased:
+            categories_purchased.append(product.maille)
+        if product.univers not in categories_purchased:
+            categories_purchased.append(product.univers)
+        if product.famille not in categories_purchased:
+            categories_purchased.append(product.famille)
+
+    accuracy = {}
+    for product_id in recommendations:
+        product = getProduct(product_id)
+        categories = 0
+        # je ne sais pas comment sortir les catégories depuis le product
+        if product["maille"] not in categories_purchased:
+            categories += 1
+        if product["univers"] not in categories_purchased:
+            categories += 1
+        if product["famille"] not in categories_purchased:
+            categories += 1
+
+        accuracy[str(product["libelle"])] = "This product is {}% categorically compatible with your purchases".format(
+            categories / 3 * 100
+        )
+
+    return accuracy
 
 def getUserRecommendations(userID):
     '''
@@ -153,7 +199,14 @@ def getUserRecommendations(userID):
     if len(results)==3:
         return results[0][:1] + results[1][:1] + results[2][:1]
 
-    print("results ",results)
+    print("results ", results)
+    accuracy = get_recommendation_accuracy(results, purchases)
+
+    # envoyé une dictionnaire pour sortir les 2 infos sur le front
+    # return {
+    #     "results": results,
+    #     "accuracy": accuracy
+    # }
 
     return results
 
