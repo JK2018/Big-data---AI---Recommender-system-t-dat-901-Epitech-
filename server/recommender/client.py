@@ -12,35 +12,32 @@ def getTop10QuantityObject():
     print(result)
     return result
 
+
 def getProduct(product_id):
-    cursor = itemStats.find_one({'PROD_ID.0': product_id})
-    items_data = pd.DataFrame(list(cursor))
-
-    return items_data
+    result = itemStats.find_one({'PROD_ID': product_id})
+    return result
 
 
-def getUserData2 (user_id):
+def getUserData2(user_id):
     print("userId2 : "+str(user_id))
     cursor = clientStats.find_one({'CLI_ID.0': user_id})
-    resultDf = pd.DataFrame(cursor) 
-    
-    
-    
+    resultDf = pd.DataFrame(cursor)
+
     result = {}
     resultDf['PRIX_NET'] = resultDf['PRIX_NET'].apply(float)
     resultDf['TICKET_ID'] = resultDf['TICKET_ID'].apply(int)
     user_tickets = resultDf['TICKET_ID'].unique()
     cart_tot = resultDf.groupby("TICKET_ID").sum()
-    #return cart_tot
+    # return cart_tot
     result['cli_id'] = user_id
-    
+
     result['ticket_ids'] = int(user_tickets[0])
-    
+
     nb_tot_paniers = len(user_tickets)
     result['nb_tot_paniers'] = nb_tot_paniers
 
     total_depenses = resultDf['PRIX_NET'].sum()
-    result['total_depenses'] = total_depenses # "%.2f" %
+    result['total_depenses'] = total_depenses  # "%.2f" %
 
     prix_panier_max = cart_tot['PRIX_NET'].max()
     result['prix_panier_max'] = prix_panier_max
@@ -51,14 +48,17 @@ def getUserData2 (user_id):
     prix_article_achete_max = resultDf['PRIX_NET'].max()
     result['prix_article_achete_max'] = prix_article_achete_max
 
-    depenses_par_moi = resultDf[['MOIS_VENTE', 'PRIX_NET']].groupby("MOIS_VENTE").sum()
+    depenses_par_moi = resultDf[['MOIS_VENTE', 'PRIX_NET']].groupby(
+        "MOIS_VENTE").sum()
     result['depenses_par_moi'] = depenses_par_moi.to_json()
 
     prix_panier_moy = cart_tot['PRIX_NET'].mean()
     result['prix_panier_moy'] = "%.2f" % prix_panier_moy
 
-    nb_paniers_par_moi = resultDf[['MOIS_VENTE', 'TICKET_ID']].groupby("MOIS_VENTE").nunique()
-    nb_paniers_par_moi.drop(nb_paniers_par_moi.columns[0], axis=1, inplace=True)
+    nb_paniers_par_moi = resultDf[['MOIS_VENTE', 'TICKET_ID']].groupby(
+        "MOIS_VENTE").nunique()
+    nb_paniers_par_moi.drop(
+        nb_paniers_par_moi.columns[0], axis=1, inplace=True)
     result['nb_paniers_par_moi'] = nb_paniers_par_moi.to_json()
 
     top_ten_produits_achetes = resultDf['LIBELLE'].value_counts()
@@ -72,7 +72,7 @@ def getUserData2 (user_id):
 
     top_univers_achetes = resultDf['UNIVERS'].value_counts()
     result['top_univers_achetes'] = top_univers_achetes.to_json()
-    
+
     if top_famille_achetes.max() == top_famille_achetes.get('MAQUILLAGE'):
         gender_supposition = 'FEMALE'
     elif top_famille_achetes.get('MAQUILLAGE') == 'None':
@@ -80,7 +80,7 @@ def getUserData2 (user_id):
     else:
         gender_supposition = 'UNKNOWN'
     result['gender_supposition'] = gender_supposition
-    
+
     print(result)
 
     return result
@@ -98,32 +98,46 @@ def get_recommendation_accuracy(recommendations, purchases):
     Returns:
         Dict: LIBELLE as keys and string message as values
     """
+    print("purchases:", purchases)
+
+    purchaseObjects = []
+    for productObject in purchases:
+        # print("productObject: ", productObject)
+        purchaseObjects.append(getProduct(productObject))
+        # data = getProduct(productObject)
+        # print(data)
+
+    # print("purchaseObjects :", purchaseObjects)
+
     categories_purchased = []
-    for product in purchases:
-        if product.maille not in categories_purchased:
-            categories_purchased.append(product.maille)
-        if product.univers not in categories_purchased:
-            categories_purchased.append(product.univers)
-        if product.famille not in categories_purchased:
-            categories_purchased.append(product.famille)
+    for product in purchaseObjects:
+        if product["MAILLE"] not in categories_purchased:
+            categories_purchased.append(product["MAILLE"])
+        if product["UNIVERS"] not in categories_purchased:
+            categories_purchased.append(product["UNIVERS"])
+        if product["FAMILLE"] not in categories_purchased:
+            categories_purchased.append(product["FAMILLE"])
+
+    print("categories_purchased :", categories_purchased)
 
     accuracy = {}
     for product_id in recommendations:
         product = getProduct(product_id)
-        categories = 0
+        percentageCat = 0
         # je ne sais pas comment sortir les catégories depuis le product
-        if product["maille"] not in categories_purchased:
-            categories += 1
-        if product["univers"] not in categories_purchased:
-            categories += 1
-        if product["famille"] not in categories_purchased:
-            categories += 1
+        if product["MAILLE"] in categories_purchased:
+            percentageCat += 1
+        if product["UNIVERS"] in categories_purchased:
+            percentageCat += 1
+        if product["FAMILLE"] in categories_purchased:
+            percentageCat += 1
 
-        accuracy[str(product["libelle"])] = "This product is {}% categorically compatible with your purchases".format(
-            categories / 3 * 100
+        accuracy[str(product["LIBELLE"])] = "This product is {}% categorically compatible with your purchases".format(
+            percentageCat / 3 * 100
         )
 
     return accuracy
+
 
 def getUserRecommendations(userID):
     '''
@@ -133,26 +147,25 @@ def getUserRecommendations(userID):
           this client. If client purchaseed less than 3 items then it ll recommend similar items 
           to the one he has already bought.
     '''
-    
+
     # fetch items data from db and set to dataframe
     cursor = itemStats.find({})
-    fields = ['PRIX_NET', 'FAMILLE', 'LIBELLE', 'UNIVERS', 'MAILLE', 'PROD_ID', 'PRIX_CAT']
-    items_data = pd.DataFrame(list(cursor), columns = fields)
+    fields = ['PRIX_NET', 'FAMILLE', 'LIBELLE',
+              'UNIVERS', 'MAILLE', 'PROD_ID', 'PRIX_CAT']
+    items_data = pd.DataFrame(list(cursor), columns=fields)
 
     #print("step1 : ",items_data)
 
-
     # remove unecessary columns
     items_data2 = items_data.copy()
-    items_data2['TEXT']= items_data2['LIBELLE']+' '+items_data2['MAILLE']+' '+items_data2['UNIVERS']+' '+items_data2['FAMILLE']
+    items_data2['TEXT'] = items_data2['LIBELLE']+' '+items_data2['MAILLE'] + \
+        ' '+items_data2['UNIVERS']+' '+items_data2['FAMILLE']
     items_data2.drop('LIBELLE', axis=1, inplace=True)
     items_data2.drop('MAILLE', axis=1, inplace=True)
     items_data2.drop('UNIVERS', axis=1, inplace=True)
     items_data2.drop('FAMILLE', axis=1, inplace=True)
     items_data2.drop('PRIX_NET', axis=1, inplace=True)
 
-    
-    
     count = CountVectorizer()
     count_matrix = count.fit_transform(items_data2['TEXT'])
     cosine_sim = cosine_similarity(count_matrix, count_matrix)
@@ -160,27 +173,24 @@ def getUserRecommendations(userID):
 
     #print("step1 : ",indices)
 
-    def recommend(prod, cosine_sim = cosine_sim):
+    def recommend(prod, cosine_sim=cosine_sim):
         recommended_prods = []
         idx = indices[indices == prod].index[0]
-        score_series = pd.Series(cosine_sim[idx]).sort_values(ascending = False)
+        score_series = pd.Series(cosine_sim[idx]).sort_values(ascending=False)
         top_15_indices = list(score_series.iloc[1:16].index)
         for i in top_15_indices:
             recommended_prods.append(list(items_data2['PROD_ID'])[i])
 
         return recommended_prods
 
-
-    query2={"CLI_ID":int(userID)}
-    cursor2= clientCol.find(query2)
+    query2 = {"CLI_ID": int(userID)}
+    cursor2 = clientCol.find(query2)
     fields2 = ['CLI_ID', 'PROD_ID', 'QTY', 'RATING']
-    purchases = pd.DataFrame(list(cursor2), columns = fields2)
-    #print("step2 : ",purchases)
-    
-    
-    #purchases = client_data.loc[client_data['CLI_ID'] == userID] # request DB here
+    purchases = pd.DataFrame(list(cursor2), columns=fields2)
+
+    # purchases = client_data.loc[client_data['CLI_ID'] == userID] # request DB here
     p_series = pd.Series(purchases['PROD_ID'])
-    topThree = purchases.head(3)
+    topThree = purchases.copy().head(3)
     results = []
     for index, row in topThree.iterrows():
         a = recommend(row['PROD_ID'])
@@ -189,18 +199,21 @@ def getUserRecommendations(userID):
             if value in a:
                 a.remove(value)
         results.append(a)
-        
-    if len(results)==1:
-        return results[0][:3]
-    
-    if len(results)==2:
-        return results[0][:2] + results[1][:1]
-    
-    if len(results)==3:
-        return results[0][:1] + results[1][:1] + results[2][:1]
 
-    print("results ", results)
-    accuracy = get_recommendation_accuracy(results, purchases)
+    # PROD_ID buyed by userId
+    accuracyList = p_series.tolist()
+
+    if len(results) == 1:
+        return [results[0][:3], accuracyList]
+
+    if len(results) == 2:
+        return [results[0][:2] + results[1][:1], accuracyList]
+
+    if len(results) == 3:
+        return [list(set(results[0][:1] + results[1][:1] + results[2][:1])), accuracyList]
+
+    # print("results ", results)
+    # accuracy = get_recommendation_accuracy(results, purchases)
 
     # envoyé une dictionnaire pour sortir les 2 infos sur le front
     # return {
@@ -208,8 +221,4 @@ def getUserRecommendations(userID):
     #     "accuracy": accuracy
     # }
 
-    return results
-
-        
-    
-    
+    # return results
