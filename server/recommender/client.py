@@ -98,16 +98,10 @@ def get_recommendation_accuracy(recommendations, purchases):
     Returns:
         Dict: LIBELLE as keys and string message as values
     """
-    print("purchases:", purchases)
 
     purchaseObjects = []
     for productObject in purchases:
-        # print("productObject: ", productObject)
         purchaseObjects.append(getProduct(productObject))
-        # data = getProduct(productObject)
-        # print(data)
-
-    # print("purchaseObjects :", purchaseObjects)
 
     categories_purchased = []
     for product in purchaseObjects:
@@ -118,13 +112,10 @@ def get_recommendation_accuracy(recommendations, purchases):
         if product["FAMILLE"] not in categories_purchased:
             categories_purchased.append(product["FAMILLE"])
 
-    print("categories_purchased :", categories_purchased)
-
     accuracy = {}
     for product_id in recommendations:
         product = getProduct(product_id)
         percentageCat = 0
-        # je ne sais pas comment sortir les catégories depuis le product
         if product["MAILLE"] in categories_purchased:
             percentageCat += 1
         if product["UNIVERS"] in categories_purchased:
@@ -190,7 +181,7 @@ def getUserRecommendations(userID):
 
     # purchases = client_data.loc[client_data['CLI_ID'] == userID] # request DB here
     p_series = pd.Series(purchases['PROD_ID'])
-    topThree = purchases.copy().head(3)
+    topThree = purchases.head(3)
     results = []
     for index, row in topThree.iterrows():
         a = recommend(row['PROD_ID'])
@@ -211,14 +202,3 @@ def getUserRecommendations(userID):
 
     if len(results) == 3:
         return [list(set(results[0][:1] + results[1][:1] + results[2][:1])), accuracyList]
-
-    # print("results ", results)
-    # accuracy = get_recommendation_accuracy(results, purchases)
-
-    # envoyé une dictionnaire pour sortir les 2 infos sur le front
-    # return {
-    #     "results": results,
-    #     "accuracy": accuracy
-    # }
-
-    # return results
