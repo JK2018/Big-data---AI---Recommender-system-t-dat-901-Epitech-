@@ -5,14 +5,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 
 
-def getTop10QuantityObject():
-    objInstance = ObjectId("61a176352e90743f7b15c073")
-    result = storeStats.find_one({"_id": objInstance})
-    del result["_id"]
-    print(result)
-    return result
-
-
 def getProduct(product_id):
     result = itemStats.find_one({'PROD_ID': product_id})
     return result

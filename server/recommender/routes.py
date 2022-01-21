@@ -17,9 +17,9 @@ def getStore():
     return jsonify(getStoreInfos())
 
 
-@app.route('/getTop10QuantityObject', methods=['GET'])
+@app.route('/userIds', methods=['GET'])
 def getClientsId():
-    return jsonify(getTop10QuantityObject())
+    return jsonify(getClientsId())
 
 
 @app.route('/getUserData2', methods=["GET", 'POST'])
