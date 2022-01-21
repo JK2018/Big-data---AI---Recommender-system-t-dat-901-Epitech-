@@ -1,5 +1,6 @@
 from recommender import app, request, jsonify
 from recommender.store import *
+from recommender.client import *
 
 # La route pour envoyer la liste des ID client
 
@@ -16,7 +17,23 @@ def getStore():
     return jsonify(getStoreInfos())
 
 
-# @app.route('/getClients', methods=['POST'])
-# @app.route('/getSellsInformations')
-# def getSellsInformations():
-#     info = {}
+@app.route('/getTop10QuantityObject', methods=['GET'])
+def getClientsId():
+    return jsonify(getTop10QuantityObject())
+
+
+@app.route('/getUserData2', methods=["GET", 'POST'])
+def getUserData():
+    print("---init---")
+    userId = request.form["userId"]
+    print("userId : "+userId)
+    return jsonify(getUserData2(userId))
+
+
+@app.route('/getUserRecommendations', methods=["GET", 'POST'])
+def getUserRecommendation():
+    print("---init recomm---")
+    userId = request.form["userId"]
+    print("userId : "+userId)
+    return jsonify(ids=getUserRecommendations(userId)[0], accuracy=get_recommendation_accuracy(
+        getUserRecommendations(userId)[0], getUserRecommendations(userId)[1]))
