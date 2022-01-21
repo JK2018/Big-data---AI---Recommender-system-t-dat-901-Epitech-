@@ -1,8 +1,18 @@
+import re
 import pandas as pd
 import json
 from recommender.database import storeStats, ObjectId, clientStats, itemStats, clientCol
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
+from bson import ObjectId
+
+
+# Class used to avoid Objectid error when jsonifiy
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
 
 
 def getProduct(product_id):
@@ -10,10 +20,19 @@ def getProduct(product_id):
     return result
 
 
-def getUserData2(user_id):
+def getClientsId():
+    result = clientStats.find({}, {"_id": 0, "CLI_ID.0": 1}).limit(10)
+    print(result)
+    return list(result)
+
+
+def getUserData(user_id):
     print("userId2 : "+str(user_id))
     cursor = clientStats.find_one({'CLI_ID.0': user_id})
     resultDf = pd.DataFrame(cursor)
+
+    if resultDf.empty:
+        return -1
 
     result = {}
     resultDf['PRIX_NET'] = resultDf['PRIX_NET'].apply(float)
@@ -74,7 +93,6 @@ def getUserData2(user_id):
     result['gender_supposition'] = gender_supposition
 
     print(result)
-
     return result
 
 

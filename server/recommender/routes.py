@@ -13,25 +13,36 @@ def index():
 
 
 @app.route('/getStoreInfos', methods=['GET'])
-def getStore():
+def getStoreRoute():
     return jsonify(getStoreInfos())
 
 
-@app.route('/userIds', methods=['GET'])
-def getClientsId():
-    return jsonify(getClientsId())
+@app.route('/getUserIds', methods=['GET'])
+def getClientsIdRoute():
+    ids = getClientsId()
+    return JSONEncoder().encode(ids)
 
 
-@app.route('/getUserData2', methods=["GET", 'POST'])
-def getUserData():
-    print("---init---")
-    userId = request.form["userId"]
-    print("userId : "+userId)
-    return jsonify(getUserData2(userId))
+@app.route('/getUserIds', methods=['GET'])
+def getUserRoute():
+    ids = getClientsId()
+    return JSONEncoder().encode(ids)
+
+
+@app.route('/getUserData', methods=["GET"])
+def getUserDataRoute():
+    userId = request.args.get('userId')
+    # user = getUserData(userId)
+
+    result = getUserData(userId)
+    if result == -1:
+        return "User not found", 400
+    else:
+        return result
 
 
 @app.route('/getUserRecommendations', methods=["GET", 'POST'])
-def getUserRecommendation():
+def getUserRecommendationRoute():
     print("---init recomm---")
     userId = request.form["userId"]
     print("userId : "+userId)

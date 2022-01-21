@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  BarChart,
-  Bar,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import styled from "styled-components";
@@ -51,14 +41,6 @@ const month = [
   "Nov",
   "Déc",
 ];
-
-const getIntroOfPage = (label) => {
-  if (label === "Jan") {
-    return "Page A is about men's clothing";
-  }
-
-  return "";
-};
 
 const CustomTooltip = ({ active, payload, label }) => {
   console.log(payload);
