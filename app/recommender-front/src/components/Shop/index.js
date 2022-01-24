@@ -1,6 +1,7 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import axios from "axios";
+import { CircularProgress } from "@mui/material";
 
 import {
   StoreStatsCards,
@@ -35,7 +36,7 @@ const Shop = () => {
       <h1 style={{ marginTop: "0" }}>Mon magasin</h1>
       {error && <p>{error.message}</p>}
       {loading ? (
-        <p>IS LOADING...</p>
+        <CircularProgress />
       ) : (
         <Grid container spacing={2}>
           {data && <StoreStatsCards data={data.store_informations} />}

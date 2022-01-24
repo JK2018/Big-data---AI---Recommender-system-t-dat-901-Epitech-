@@ -19,21 +19,19 @@ def getStoreRoute():
 
 @app.route('/getUserIds', methods=['GET'])
 def getClientsIdRoute():
-    ids = getClientsId()
+    ids = getClientsId(request.args.get('searchId'))
     return JSONEncoder().encode(ids)
 
 
-@app.route('/getUserIds', methods=['GET'])
-def getUserRoute():
-    ids = getClientsId()
-    return JSONEncoder().encode(ids)
+# @app.route('/getUserIds', methods=['GET'])
+# def getUserRoute():
+#     ids = getClientsId()
+#     return JSONEncoder().encode(ids)
 
 
 @app.route('/getUserData', methods=["GET"])
 def getUserDataRoute():
     userId = request.args.get('userId')
-    # user = getUserData(userId)
-
     result = getUserData(userId)
     if result == -1:
         return "User not found", 400
@@ -41,10 +39,8 @@ def getUserDataRoute():
         return result
 
 
-@app.route('/getUserRecommendations', methods=["GET", 'POST'])
+@app.route('/getUserRecommendations', methods=["GET"])
 def getUserRecommendationRoute():
-    print("---init recomm---")
-    userId = request.form["userId"]
-    print("userId : "+userId)
+    userId = request.args.get('userId')
     return jsonify(ids=getUserRecommendations(userId)[0], accuracy=get_recommendation_accuracy(
         getUserRecommendations(userId)[0], getUserRecommendations(userId)[1]))

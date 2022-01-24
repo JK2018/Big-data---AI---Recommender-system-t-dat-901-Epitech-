@@ -20,8 +20,10 @@ def getProduct(product_id):
     return result
 
 
-def getClientsId():
-    result = clientStats.find({}, {"_id": 0, "CLI_ID.0": 1}).limit(10)
+def getClientsId(id):
+    regx = re.compile("^" + id, re.IGNORECASE)
+    result = clientStats.find(
+        {"CLI_ID.0": regx}, {"_id": 0, "CLI_ID.0": 1}).limit(20)
     print(result)
     return list(result)
 

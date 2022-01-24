@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import styled from "styled-components";
+import CustomPaper from "../../Utils/customPaper";
 
 const LinesWithNumber = styled.div`
   display: flex;
@@ -29,12 +30,6 @@ const StoreStatsCards = ({ data = {} }) => {
           >
             {/* A améliorer */}
             <BlockContent>
-              <LinesWithNumber>
-                <Typography sx={{ fontWeight: "bold" }}>
-                  Total de client :
-                </Typography>
-                <div>{data.totalNbClients}</div>
-              </LinesWithNumber>
               <LinesWithNumber>
                 <Typography>Dépense moy. par client :</Typography>
                 <div>{Math.round(data.clientsSpendOnAvg * 100) / 100} €</div>
@@ -67,16 +62,18 @@ const StoreStatsCards = ({ data = {} }) => {
             }}
           >
             <BlockContent>
-              <LinesWithNumber>
-                <Typography sx={{ fontWeight: "bold" }}>
-                  Nombre d'objet en stock :
-                </Typography>
-                <div>{data.nbDiffItems}</div>
-              </LinesWithNumber>
-              <LinesWithNumber>
-                <Typography>Prix moyen par objet :</Typography>
-                <div>{Math.round(data.itemPriceAvg * 100) / 100} €</div>
-              </LinesWithNumber>
+              <CustomPaper
+                label={"Nombre d'objet en stock"}
+                isBold={true}
+                isMoney={false}
+                value={data.nbDiffItems}
+              />
+              <CustomPaper
+                label={"Prix moyen par objet"}
+                toRound={true}
+                isMoney={true}
+                value={data.itemPriceAvg}
+              />
             </BlockContent>
           </Paper>
         </Grid>
@@ -88,6 +85,13 @@ const StoreStatsCards = ({ data = {} }) => {
             }}
           >
             <BlockContent>
+              <CustomPaper
+                label={"Prix moyen d'un ticket"}
+                isBold={true}
+                isMoney={true}
+                toRound={true}
+                value={data.avgTicketPrice}
+              />
               <LinesWithNumber>
                 <Typography sx={{ fontWeight: "bold" }}>
                   Prix moyen d'un ticket :
