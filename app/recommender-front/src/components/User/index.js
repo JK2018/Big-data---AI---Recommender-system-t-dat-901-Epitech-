@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 import styled from "styled-components";
 import axios from "axios";
 
-import { UserProfile } from "./Cards";
+import { UserProfile, UserRecommendations } from "./Cards";
 
 const ClientWrapper = styled.div`
   display: flex;
@@ -62,36 +62,6 @@ const Client = () => {
       setOptions([]);
     }
   }, [open]);
-
-  // React.useEffect(() => {
-  //   if (currentUser) {
-  //     setUserLoading(true);
-  //     setUserRecoLoading(true);
-  //     axios
-  //       .get("http://127.0.0.1:5000/getUserData?userId=" + searchValue)
-  //       .then(function (response) {
-  //         setCurrentUserData(response.data);
-  //         setUserLoading(false);
-  //         axios
-  //           .get(
-  //             "http://127.0.0.1:5000/getUserRecommendations?userId=" +
-  //               searchValue
-  //           )
-  //           .then(function (recommendations) {
-  //             setCurrentUserRecommandations(recommendations.data);
-  //             setUserRecoLoading(false);
-
-  //             console.log(recommendations);
-  //           })
-  //           .catch(function (error) {
-  //             console.log(error);
-  //           });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //   }
-  // }, [currentUser]);
 
   const handleInputChange = (event, value) => {
     setOptions([]);
@@ -157,8 +127,8 @@ const Client = () => {
       />
       <Grid item xs={12} sx={{ marginTop: "25px" }}>
         <UserProfile currentUser={currentUser} />
-
-        <div>
+        <UserRecommendations currentUser={currentUser} />
+        {/* <div>
           <h3 style={{ marginTop: "0px" }}>Recommandations client</h3>
           {userRecoLoading && <CircularProgress />}
           {currentUserRecommandations && !userRecoLoading && (
@@ -170,7 +140,6 @@ const Client = () => {
                     height: "100%",
                   }}
                 >
-                  {/* A améliorer */}
                   <BlockContent>
                     <p>Object recommandés :</p>
                   </BlockContent>
@@ -190,7 +159,7 @@ const Client = () => {
               </Grid>
             </Grid>
           )}
-        </div>
+        </div> */}
       </Grid>
     </ClientWrapper>
   );
