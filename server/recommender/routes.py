@@ -43,6 +43,4 @@ def getUserDataRoute():
 def getUserRecommendationRoute():
     userId = request.args.get('userId')
     recommendations = getUserRecommendations(userId)
-    accuracy = get_recommendation_accuracy(
-        recommendations[0], recommendations[1])
-    return jsonify(ids=recommendations[0], accuracy=accuracy)
+    return jsonify(ids=recommendations[0], accuracy=recommendations[1])
