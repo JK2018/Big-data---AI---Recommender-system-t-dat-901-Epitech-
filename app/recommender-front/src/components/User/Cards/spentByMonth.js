@@ -3,16 +3,12 @@ import {
   LineChart,
   Line,
   XAxis,
-  YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
 } from "recharts";
 import Paper from "@mui/material/Paper";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
 
 //TODO: creér un fichier avec les mois pourrait etre utile
 const MONTHS = [

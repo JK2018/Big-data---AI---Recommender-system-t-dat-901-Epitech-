@@ -1,7 +1,7 @@
 import re
 import pandas as pd
 import json
-from recommender.database import storeStats, ObjectId, clientStats, itemStats, clientCol
+from recommender.database import storeStats, ObjectId, clientStats, itemStats, clientCol, model2
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 from bson import ObjectId
@@ -16,7 +16,7 @@ class JSONEncoder(json.JSONEncoder):
 
 
 def getProduct(product_id):
-    result = itemStats.find_one({'PROD_ID': product_id})
+    result = itemStats.find_one({'PROD_ID': product_id}, {'_id': 0})
     return result
 
 
@@ -139,6 +139,14 @@ def get_recommendation_accuracy(recommendations, purchases):
     return accuracy
 
 
+def svdPredict(userId):
+    cursor = model2.find_one({'clientId': userId}, {"_id": 0, "clientId": 0})
+    items = []
+    for id in cursor["recommendedItems"]:
+        items.append(getProduct(id))
+    return items
+
+
 def getUserRecommendations(userID):
     '''
     IN: client id
@@ -208,9 +216,9 @@ def getUserRecommendations(userID):
         recommendations = results[0][:2] + results[1][:1]
 
     elif len(results) == 3:
-        recommendations = list(set(results[0][:1] + results[1][:1] + results[2][:1]))
+        recommendations = list(
+            set(results[0][:1] + results[1][:1] + results[2][:1]))
 
     accuracy = get_recommendation_accuracy(recommendations, p_series.tolist())
 
     return [recommendations, accuracy]
-

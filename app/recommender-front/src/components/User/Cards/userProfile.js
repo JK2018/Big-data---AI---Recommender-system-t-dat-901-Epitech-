@@ -25,7 +25,6 @@ const CATEGORIES = [
 ];
 
 const UserProfile = ({ currentUser }) => {
-  console.log("currentUser", currentUser);
   const [loading, setloading] = React.useState(false);
   const [userData, setUserData] = React.useState(null);
   const [tabValue, setTabValue] = React.useState(0);

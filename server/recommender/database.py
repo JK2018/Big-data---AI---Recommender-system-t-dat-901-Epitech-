@@ -9,6 +9,8 @@ storeStats = db['storeStats']
 itemStats = db['items']
 clientCol = db['clients']
 
-clientB = pymongo.MongoClient("mongodb+srv://dat:dat@clusterdat2.afein.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+clientB = pymongo.MongoClient(
+    "mongodb+srv://dat:dat@clusterdat2.afein.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 dbB = clientB['datdb']
 clientStats = dbB['groupbyCli']
+model2 = dbB["model2predictions"]

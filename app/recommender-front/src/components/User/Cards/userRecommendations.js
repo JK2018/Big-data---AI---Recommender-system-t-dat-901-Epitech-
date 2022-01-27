@@ -4,6 +4,8 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import styled from "styled-components";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 import CustomPaper from "../../Utils/customPaper";
 
@@ -18,6 +20,11 @@ const BlockContent = styled.div`
 const UserRecommendations = ({ currentUser }) => {
   const [loading, setloading] = React.useState(false);
   const [userRecommendations, setUserRecommendations] = React.useState(null);
+  const [tabValue, setTabValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   React.useEffect(() => {
     if (!currentUser) {
@@ -38,6 +45,12 @@ const UserRecommendations = ({ currentUser }) => {
       });
   }, [currentUser]);
 
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
+    };
+  }
   return (
     <div
       style={{
@@ -55,43 +68,56 @@ const UserRecommendations = ({ currentUser }) => {
             <Grid item xs={12} sm={12} md={6}>
               <Paper>
                 <BlockContent>
-                  <CustomPaper
-                    label={"Recommendations"}
-                    toRound={false}
-                    isMoney={false}
-                    value={userRecommendations?.ids.toString()}
-                  />
-                  <ul>
-                    {Object.keys(userRecommendations?.accuracy).map(
-                      (oui, idx) => (
-                        <li>{oui}</li>
-                      )
-                    )}
-                  </ul>
+                  <Tabs
+                    value={tabValue}
+                    onChange={handleChange}
+                    aria-label="recommendations-tabs"
+                  >
+                    <Tab label="NLP" {...a11yProps(0)} />
+                    <Tab label="SVD" {...a11yProps(1)} />
+                  </Tabs>
+
+                  {tabValue === 0 ? (
+                    <ul>
+                      {Object.keys(userRecommendations?.nlp).map((acc, idx) => (
+                        <li>{acc}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <ul>
+                      {userRecommendations?.svd.map((item, idx) => (
+                        <li>{item["LIBELLE"]}</li>
+                      ))}
+                    </ul>
+                  )}
                 </BlockContent>
               </Paper>
             </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <Paper>
-                <BlockContent>
-                  <CustomPaper
-                    label={"Accuracy"}
-                    toRound={false}
-                    isMoney={false}
-                    value={""}
-                  />
-                  <ul>
-                    {Object.keys(userRecommendations?.accuracy).map(
-                      (oui, idx) => (
-                        <li>
-                          {oui} : {userRecommendations?.accuracy[oui]}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </BlockContent>
-              </Paper>
-            </Grid>
+            {tabValue === 0 && (
+              <Grid item xs={12} sm={12} md={6}>
+                <Paper>
+                  <BlockContent>
+                    <>
+                      <CustomPaper
+                        label={"Accuracy"}
+                        toRound={false}
+                        isMoney={false}
+                        value={""}
+                      />
+                      <ul>
+                        {Object.keys(userRecommendations?.nlp).map(
+                          (acc, idx) => (
+                            <li>
+                              {acc} : {userRecommendations?.nlp[acc]}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </>
+                  </BlockContent>
+                </Paper>
+              </Grid>
+            )}
           </Grid>
         </>
       )}
