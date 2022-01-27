@@ -104,8 +104,8 @@ def get_recommendation_accuracy(recommendations, purchases):
     customer.
 
     Args:
-        recommendations (List<LIBELLE>): List of product names
-        purchases (?): ?
+        recommendations (List<PROD_ID>): List of product ids from recommendations
+        purchases (List<PROD_ID>): List of product ids from already purchased products of client
 
     Returns:
         Dict: LIBELLE as keys and string message as values
