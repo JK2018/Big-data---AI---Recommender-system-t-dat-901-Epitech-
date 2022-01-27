@@ -104,8 +104,8 @@ def get_recommendation_accuracy(recommendations, purchases):
     customer.
 
     Args:
-        recommendations (List<LIBELLE>): List of product names
-        cli_id (CLI_ID): client id
+        recommendations (List<PROD_ID>): List of product ids from recommendations
+        purchases (List<PROD_ID>): List of product ids from already purchased products of client
 
     Returns:
         Dict: LIBELLE as keys and string message as values
@@ -117,26 +117,23 @@ def get_recommendation_accuracy(recommendations, purchases):
 
     categories_purchased = []
     for product in purchaseObjects:
-        if product["MAILLE"] not in categories_purchased:
-            categories_purchased.append(product["MAILLE"])
-        if product["UNIVERS"] not in categories_purchased:
-            categories_purchased.append(product["UNIVERS"])
-        if product["FAMILLE"] not in categories_purchased:
-            categories_purchased.append(product["FAMILLE"])
+        categories_purchased.append(product["MAILLE"])
+        categories_purchased.append(product["UNIVERS"])
+        categories_purchased.append(product["FAMILLE"])
 
     accuracy = {}
     for product_id in recommendations:
         product = getProduct(product_id)
         percentageCat = 0
         if product["MAILLE"] in categories_purchased:
-            percentageCat += 1
+            percentageCat += categories_purchased.count(product["MAILLE"])
         if product["UNIVERS"] in categories_purchased:
-            percentageCat += 1
+            percentageCat += categories_purchased.count(product["UNIVERS"])
         if product["FAMILLE"] in categories_purchased:
-            percentageCat += 1
+            percentageCat += categories_purchased.count(product["FAMILLE"])
 
         accuracy[str(product["LIBELLE"])] = "This product is {}% categorically compatible with your purchases".format(
-            percentageCat / 3 * 100
+            round(percentageCat / len(categories_purchased) * 100, 2)
         )
 
     return accuracy
@@ -203,14 +200,17 @@ def getUserRecommendations(userID):
                 a.remove(value)
         results.append(a)
 
-    # PROD_ID buyed by userId
-    accuracyList = p_series.tolist()
-
+    recommendations = []
     if len(results) == 1:
-        return [results[0][:3], accuracyList]
+        recommendations = results[0][:3]
 
-    if len(results) == 2:
-        return [results[0][:2] + results[1][:1], accuracyList]
+    elif len(results) == 2:
+        recommendations = results[0][:2] + results[1][:1]
 
-    if len(results) == 3:
-        return [list(set(results[0][:1] + results[1][:1] + results[2][:1])), accuracyList]
+    elif len(results) == 3:
+        recommendations = list(set(results[0][:1] + results[1][:1] + results[2][:1]))
+
+    accuracy = get_recommendation_accuracy(recommendations, p_series.tolist())
+
+    return [recommendations, accuracy]
+
