@@ -72,6 +72,7 @@ const RoundChart = ({ data }) => {
     });
     setChartData(newData);
     console.log("round: ", newData);
+    // eslint-disable-next-line
   }, []);
 
   return (

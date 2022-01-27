@@ -71,7 +71,7 @@ const Piechart = ({ data }) => {
       };
     });
     setChartData(newData);
-    console.log(newData);
+    // eslint-disable-next-line
   }, []);
 
   function a11yProps(index) {

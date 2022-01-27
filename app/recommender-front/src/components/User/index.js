@@ -3,7 +3,6 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import styled from "styled-components";
 import axios from "axios";
 
@@ -14,23 +13,12 @@ const ClientWrapper = styled.div`
   flex-direction: column;
 `;
 
-const BlockContent = styled.div`
-  display: flex;
-  align-content: center;
-  flex-direction: column;
-  padding: 20px;
-`;
-
 const Client = () => {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
   const [searchValue, setSearchValue] = React.useState("");
-  const [userRecoLoading, setUserRecoLoading] = React.useState(false);
-
   const [currentUser, setCurrentUser] = React.useState(null);
-  const [currentUserRecommandations, setCurrentUserRecommandations] =
-    React.useState(null);
 
   React.useEffect(() => {
     let active = true;
@@ -55,6 +43,7 @@ const Client = () => {
     return () => {
       active = false;
     };
+    // eslint-disable-next-line
   }, [loading]);
 
   React.useEffect(() => {
@@ -79,9 +68,6 @@ const Client = () => {
 
     setSearchValue(value);
   };
-
-  // console.log(currentUserData);
-  console.log(currentUserRecommandations);
 
   return (
     <ClientWrapper>
@@ -128,38 +114,6 @@ const Client = () => {
       <Grid item xs={12} sx={{ marginTop: "25px" }}>
         <UserProfile currentUser={currentUser} />
         <UserRecommendations currentUser={currentUser} />
-        {/* <div>
-          <h3 style={{ marginTop: "0px" }}>Recommandations client</h3>
-          {userRecoLoading && <CircularProgress />}
-          {currentUserRecommandations && !userRecoLoading && (
-            <Grid container spacing={3} alignItems="stretch">
-              <Grid item xs={12} sm={6} md={6}>
-                <Paper
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                  }}
-                >
-                  <BlockContent>
-                    <p>Object recommandés :</p>
-                  </BlockContent>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sm={6} md={6}>
-                <Paper
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                  }}
-                >
-                  <BlockContent>
-                    <p>accuracy: </p>
-                  </BlockContent>
-                </Paper>
-              </Grid>
-            </Grid>
-          )}
-        </div> */}
       </Grid>
     </ClientWrapper>
   );

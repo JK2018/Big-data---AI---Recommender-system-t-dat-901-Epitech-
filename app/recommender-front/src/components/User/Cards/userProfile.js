@@ -2,6 +2,8 @@ import React from "react";
 import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import styled from "styled-components";
@@ -15,10 +17,17 @@ const BlockContent = styled.div`
   padding: 20px;
 `;
 
+const CATEGORIES = [
+  "top_famille_achetes",
+  "top_maille_achetes",
+  "top_univers_achetes",
+];
+
 const UserProfile = ({ currentUser }) => {
   console.log("currentUser", currentUser);
   const [loading, setloading] = React.useState(false);
   const [userData, setUserData] = React.useState(null);
+  const [tabValue, setTabValue] = React.useState(0);
 
   React.useEffect(() => {
     if (!currentUser) {
@@ -30,6 +39,7 @@ const UserProfile = ({ currentUser }) => {
       .get("http://127.0.0.1:5000/getUserData?userId=" + currentUser)
       .then(function (response) {
         setUserData(response.data);
+        console.log(response.data);
         setloading(false);
       })
       .catch(function (error) {
@@ -37,6 +47,19 @@ const UserProfile = ({ currentUser }) => {
       });
   }, [currentUser]);
 
+  const handleChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
+    };
+  }
+
+  const categoriesSelected =
+    userData && JSON.parse(userData[CATEGORIES[tabValue]]);
   console.log(userData);
   return (
     <div
@@ -54,20 +77,81 @@ const UserProfile = ({ currentUser }) => {
       {userData && !loading && (
         <>
           <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} sm={6} md={6}>
-              <Paper
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
-              >
+            <Grid item xs={12} sm={12} md={6}>
+              <Paper>
                 <BlockContent>
+                  <CustomPaper
+                    label={"Nombre total de panier"}
+                    isBold={true}
+                    isMoney={false}
+                    value={userData.nb_tot_paniers}
+                  />
                   <CustomPaper
                     label={"Prix max du panier"}
                     toRound={true}
                     isMoney={true}
+                    value={userData.prix_panier_max}
+                  />
+                  <CustomPaper
+                    label={"Prix min du panier"}
+                    toRound={true}
+                    isMoney={true}
+                    value={userData.prix_panier_min}
+                  />
+                  <CustomPaper
+                    label={"Prix moyen du panier"}
+                    toRound={true}
+                    isMoney={true}
+                    value={userData.prix_panier_moy}
+                  />
+                </BlockContent>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={12} md={6}>
+              <Paper>
+                <BlockContent>
+                  <CustomPaper
+                    label={"NON"}
+                    toRound={true}
+                    isMoney={true}
+                    value={userData.prix_article_achete_max}
+                  />
+                  <CustomPaper
+                    label={"NON"}
+                    toRound={true}
+                    isMoney={true}
                     value={userData.nb_tot_paniers}
                   />
+                  <CustomPaper
+                    label={"NON"}
+                    toRound={true}
+                    isMoney={true}
+                    value={userData.nb_tot_paniers}
+                  />
+                </BlockContent>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={12} md={12}>
+              <Paper>
+                <BlockContent>
+                  <h4 style={{ marginTop: "0px" }}>Top acheté par catégorie</h4>
+                  <Tabs
+                    value={tabValue}
+                    onChange={handleChange}
+                    aria-label="basic tabs example"
+                  >
+                    <Tab label="Familles" {...a11yProps(0)} />
+                    <Tab label="Mailles" {...a11yProps(1)} />
+                    <Tab label="Univers" {...a11yProps(2)} />
+                  </Tabs>
+
+                  <ul>
+                    {Object.keys(categoriesSelected).map((key, idx) => (
+                      <li>
+                        {key} : {categoriesSelected[key]} produits achetes
+                      </li>
+                    ))}
+                  </ul>
                 </BlockContent>
               </Paper>
             </Grid>

@@ -42,5 +42,7 @@ def getUserDataRoute():
 @app.route('/getUserRecommendations', methods=["GET"])
 def getUserRecommendationRoute():
     userId = request.args.get('userId')
-    return jsonify(ids=getUserRecommendations(userId)[0], accuracy=get_recommendation_accuracy(
-        getUserRecommendations(userId)[0], getUserRecommendations(userId)[1]))
+    recommendations = getUserRecommendations(userId)
+    accuracy = get_recommendation_accuracy(
+        recommendations[0], recommendations[1])
+    return jsonify(ids=recommendations[0], accuracy=accuracy)

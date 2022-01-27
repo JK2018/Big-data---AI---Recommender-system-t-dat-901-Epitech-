@@ -3,7 +3,6 @@ import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
-
 import styled from "styled-components";
 
 import CustomPaper from "../../Utils/customPaper";
@@ -53,13 +52,8 @@ const UserRecommendations = ({ currentUser }) => {
       {userRecommendations && !loading && (
         <>
           <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} sm={6} md={6}>
-              <Paper
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
-              >
+            <Grid item xs={12} sm={12} md={6}>
+              <Paper>
                 <BlockContent>
                   <CustomPaper
                     label={"Recommendations"}
@@ -67,6 +61,34 @@ const UserRecommendations = ({ currentUser }) => {
                     isMoney={false}
                     value={userRecommendations?.ids.toString()}
                   />
+                  <ul>
+                    {Object.keys(userRecommendations?.accuracy).map(
+                      (oui, idx) => (
+                        <li>{oui}</li>
+                      )
+                    )}
+                  </ul>
+                </BlockContent>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={12} md={6}>
+              <Paper>
+                <BlockContent>
+                  <CustomPaper
+                    label={"Accuracy"}
+                    toRound={false}
+                    isMoney={false}
+                    value={""}
+                  />
+                  <ul>
+                    {Object.keys(userRecommendations?.accuracy).map(
+                      (oui, idx) => (
+                        <li>
+                          {oui} : {userRecommendations?.accuracy[oui]}
+                        </li>
+                      )
+                    )}
+                  </ul>
                 </BlockContent>
               </Paper>
             </Grid>
