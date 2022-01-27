@@ -9,6 +9,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import styled from "styled-components";
 
 import CustomPaper from "../../Utils/customPaper";
+import SpentByMonth from "./spentByMonth";
 
 const BlockContent = styled.div`
   display: flex;
@@ -107,29 +108,28 @@ const UserProfile = ({ currentUser }) => {
                 </BlockContent>
               </Paper>
             </Grid>
+
             <Grid item xs={12} sm={12} md={6}>
-              <Paper>
+              <Paper style={{ height: "100%" }}>
                 <BlockContent>
                   <CustomPaper
-                    label={"NON"}
+                    label={"Dépenses totales"}
+                    toRound={true}
+                    isBold={true}
+                    isMoney={true}
+                    value={userData.total_depenses}
+                  />
+                  <CustomPaper
+                    label={"Prix article acheté max"}
                     toRound={true}
                     isMoney={true}
                     value={userData.prix_article_achete_max}
                   />
-                  <CustomPaper
-                    label={"NON"}
-                    toRound={true}
-                    isMoney={true}
-                    value={userData.nb_tot_paniers}
-                  />
-                  <CustomPaper
-                    label={"NON"}
-                    toRound={true}
-                    isMoney={true}
-                    value={userData.nb_tot_paniers}
-                  />
                 </BlockContent>
               </Paper>
+            </Grid>
+            <Grid item xs={12} sm={12} md={12}>
+              <SpentByMonth spent={JSON.parse(userData.depenses_par_moi)} />
             </Grid>
             <Grid item xs={12} sm={12} md={12}>
               <Paper>
