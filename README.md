@@ -7,14 +7,13 @@ For having more information about the project and the methodology, please see th
 
 ## Launch Front-end interface
 
-This application is made with React
+This application is made with the framework React
 
 1. First, you need to go to the front directory `cd /app`
 
 2. Then you need to install all dependencies `npm install`
 
 3. After the project installation you can launch the app `npm start`
-
 
 ## Launch Back-end infrastructure
 
@@ -25,5 +24,3 @@ The infrastructure is made in Python with Flask framework
 2. Then, you need to install all dependencies `pip install -r requirements.txt`
 
 3. After the project installation is complete, you can launch the app `python run.py`
-
-
