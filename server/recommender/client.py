@@ -144,7 +144,17 @@ def svdPredict(userId):
     items = []
     for id in cursor["recommendedItems"]:
         items.append(getProduct(id))
-    return items
+
+    query2 = {"CLI_ID": int(userId)}
+    cursor2 = clientCol.find(query2)
+    fields2 = ['CLI_ID', 'PROD_ID', 'QTY', 'RATING']
+    purchases = pd.DataFrame(list(cursor2), columns=fields2)
+
+    # purchases = client_data.loc[client_data['CLI_ID'] == userID] # request DB here
+    p_series = pd.Series(purchases['PROD_ID'])
+    accuracy = get_recommendation_accuracy(items, p_series.tolist())
+
+    return [items, accuracy]
 
 
 def getUserRecommendations(userID):
