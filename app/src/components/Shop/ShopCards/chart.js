@@ -71,7 +71,7 @@ const Piechart = ({ data }) => {
       };
     });
     setChartData(newData);
-    console.log(newData);
+    // eslint-disable-next-line
   }, []);
 
   function a11yProps(index) {
@@ -95,7 +95,7 @@ const Piechart = ({ data }) => {
         </Tabs>
       </Box>
       <Box sx={{ paddingTop: "20px", height: "500px" }}>
-        {tabValue === 0 ? (
+        {tabValue === 1 ? (
           <BaseChart
             data={chartData}
             line={

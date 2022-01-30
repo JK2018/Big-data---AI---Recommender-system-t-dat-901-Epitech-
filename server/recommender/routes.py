@@ -13,27 +13,36 @@ def index():
 
 
 @app.route('/getStoreInfos', methods=['GET'])
-def getStore():
+def getStoreRoute():
     return jsonify(getStoreInfos())
 
 
-@app.route('/getTop10QuantityObject', methods=['GET'])
-def getClientsId():
-    return jsonify(getTop10QuantityObject())
+@app.route('/getUserIds', methods=['GET'])
+def getClientsIdRoute():
+    ids = getClientsId(request.args.get('searchId'))
+    return JSONEncoder().encode(ids)
 
 
-@app.route('/getUserData2', methods=["GET", 'POST'])
-def getUserData():
-    print("---init---")
-    userId = request.form["userId"]
-    print("userId : "+userId)
-    return jsonify(getUserData2(userId))
+# @app.route('/getUserIds', methods=['GET'])
+# def getUserRoute():
+#     ids = getClientsId()
+#     return JSONEncoder().encode(ids)
 
 
-@app.route('/getUserRecommendations', methods=["GET", 'POST'])
-def getUserRecommendation():
-    print("---init recomm---")
-    userId = request.form["userId"]
-    print("userId : "+userId)
-    return jsonify(ids=getUserRecommendations(userId)[0], accuracy=get_recommendation_accuracy(
-        getUserRecommendations(userId)[0], getUserRecommendations(userId)[1]))
+@app.route('/getUserData', methods=["GET"])
+def getUserDataRoute():
+    userId = request.args.get('userId')
+    result = getUserData(userId)
+    if result == -1:
+        return "User not found", 400
+    else:
+        return result
+
+
+@app.route('/getUserRecommendations', methods=["GET"])
+def getUserRecommendationRoute():
+    userId = request.args.get('userId')
+    recommendations = getUserRecommendations(userId)
+    svdModel = svdPredict(userId)
+
+    return jsonify(svd=svdModel, nlp=recommendations[1])
