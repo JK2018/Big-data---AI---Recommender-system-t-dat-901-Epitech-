@@ -1,8 +1,11 @@
-/* html,
-body,
+html {
+  height: auto;
+  overflow: scroll;
+}
+/* body,
 #root,
 #app {
-  height: 100%;
+  height: auto;
 } */
 
 .App {

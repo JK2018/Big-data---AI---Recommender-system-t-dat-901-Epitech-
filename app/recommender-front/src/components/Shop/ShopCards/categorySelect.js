@@ -80,7 +80,9 @@ const CategorySelect = ({ data }) => {
           sx={{ marginBottom: "25px" }}
         >
           {Object.keys(selectFields).map((key, index) => (
-            <MenuItem value={index}>{selectFields[key]}</MenuItem>
+            <MenuItem key={index} value={index}>
+              {selectFields[key]}
+            </MenuItem>
           ))}
         </Select>
         <LinesWithNumber>

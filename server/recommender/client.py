@@ -1,27 +1,40 @@
+import re
 import pandas as pd
 import json
-from recommender.database import storeStats, ObjectId, clientStats, itemStats, clientCol
+from recommender.database import storeStats, ObjectId, clientStats, itemStats, clientCol, model2
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
+from bson import ObjectId
 
 
-def getTop10QuantityObject():
-    objInstance = ObjectId("61a176352e90743f7b15c073")
-    result = storeStats.find_one({"_id": objInstance})
-    del result["_id"]
-    print(result)
-    return result
+# Class used to avoid Objectid error when jsonifiy
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
 
 
 def getProduct(product_id):
-    result = itemStats.find_one({'PROD_ID': product_id})
+    result = itemStats.find_one({'PROD_ID': product_id}, {'_id': 0})
     return result
 
 
-def getUserData2(user_id):
+def getClientsId(id):
+    regx = re.compile("^" + id, re.IGNORECASE)
+    result = clientStats.find(
+        {"CLI_ID.0": regx}, {"_id": 0, "CLI_ID.0": 1}).limit(20)
+    print(result)
+    return list(result)
+
+
+def getUserData(user_id):
     print("userId2 : "+str(user_id))
     cursor = clientStats.find_one({'CLI_ID.0': user_id})
     resultDf = pd.DataFrame(cursor)
+
+    if resultDf.empty:
+        return -1
 
     result = {}
     resultDf['PRIX_NET'] = resultDf['PRIX_NET'].apply(float)
@@ -82,7 +95,6 @@ def getUserData2(user_id):
     result['gender_supposition'] = gender_supposition
 
     print(result)
-
     return result
 
 
@@ -92,8 +104,8 @@ def get_recommendation_accuracy(recommendations, purchases):
     customer.
 
     Args:
-        recommendations (List<LIBELLE>): List of product names
-        cli_id (CLI_ID): client id
+        recommendations (List<PROD_ID>): List of product ids from recommendations
+        purchases (List<PROD_ID>): List of product ids from already purchased products of client
 
     Returns:
         Dict: LIBELLE as keys and string message as values
@@ -105,29 +117,42 @@ def get_recommendation_accuracy(recommendations, purchases):
 
     categories_purchased = []
     for product in purchaseObjects:
-        if product["MAILLE"] not in categories_purchased:
-            categories_purchased.append(product["MAILLE"])
-        if product["UNIVERS"] not in categories_purchased:
-            categories_purchased.append(product["UNIVERS"])
-        if product["FAMILLE"] not in categories_purchased:
-            categories_purchased.append(product["FAMILLE"])
+        categories_purchased.append(product["MAILLE"])
+        categories_purchased.append(product["UNIVERS"])
+        categories_purchased.append(product["FAMILLE"])
 
     accuracy = {}
     for product_id in recommendations:
         product = getProduct(product_id)
         percentageCat = 0
         if product["MAILLE"] in categories_purchased:
-            percentageCat += 1
+            percentageCat += categories_purchased.count(product["MAILLE"])
         if product["UNIVERS"] in categories_purchased:
-            percentageCat += 1
+            percentageCat += categories_purchased.count(product["UNIVERS"])
         if product["FAMILLE"] in categories_purchased:
-            percentageCat += 1
+            percentageCat += categories_purchased.count(product["FAMILLE"])
 
         accuracy[str(product["LIBELLE"])] = "This product is {}% categorically compatible with your purchases".format(
-            percentageCat / 3 * 100
+            round(percentageCat / len(categories_purchased) * 100, 2)
         )
 
     return accuracy
+
+
+def svdPredict(userId):
+    cursor = model2.find_one({'clientId': userId}, {"_id": 0, "clientId": 0})
+
+    query2 = {"CLI_ID": int(userId)}
+    cursor2 = clientCol.find(query2)
+    fields2 = ['CLI_ID', 'PROD_ID', 'QTY', 'RATING']
+    purchases = pd.DataFrame(list(cursor2), columns=fields2)
+
+    # purchases = client_data.loc[client_data['CLI_ID'] == userID] # request DB here
+    p_series = pd.Series(purchases['PROD_ID'])
+    accuracy = get_recommendation_accuracy(
+        cursor["recommendedItems"], p_series.tolist())
+
+    return [accuracy]
 
 
 def getUserRecommendations(userID):
@@ -191,14 +216,17 @@ def getUserRecommendations(userID):
                 a.remove(value)
         results.append(a)
 
-    # PROD_ID buyed by userId
-    accuracyList = p_series.tolist()
-
+    recommendations = []
     if len(results) == 1:
-        return [results[0][:3], accuracyList]
+        recommendations = results[0][:3]
 
-    if len(results) == 2:
-        return [results[0][:2] + results[1][:1], accuracyList]
+    elif len(results) == 2:
+        recommendations = results[0][:2] + results[1][:1]
 
-    if len(results) == 3:
-        return [list(set(results[0][:1] + results[1][:1] + results[2][:1])), accuracyList]
+    elif len(results) == 3:
+        recommendations = list(
+            set(results[0][:1] + results[1][:1] + results[2][:1]))
+
+    accuracy = get_recommendation_accuracy(recommendations, p_series.tolist())
+
+    return [accuracy]
