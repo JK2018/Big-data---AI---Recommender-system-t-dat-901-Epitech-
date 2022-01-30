@@ -44,5 +44,4 @@ def getUserRecommendationRoute():
     userId = request.args.get('userId')
     recommendations = getUserRecommendations(userId)
     svdModel = svdPredict(userId)
-
-    return jsonify(svd=svdModel, nlp=recommendations[1])
+    return {"svd": svdModel, "nlp": recommendations}

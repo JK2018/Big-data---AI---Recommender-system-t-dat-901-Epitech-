@@ -51,6 +51,7 @@ const UserRecommendations = ({ currentUser }) => {
       "aria-controls": `simple-tabpanel-${index}`,
     };
   }
+
   return (
     <div
       style={{
@@ -77,47 +78,50 @@ const UserRecommendations = ({ currentUser }) => {
                     <Tab label="SVD" {...a11yProps(1)} />
                   </Tabs>
 
-                  {tabValue === 0 ? (
-                    <ul>
-                      {Object.keys(userRecommendations?.nlp).map((acc, idx) => (
-                        <li>{acc}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <ul>
-                      {userRecommendations?.svd.map((item, idx) => (
-                        <li>{item["LIBELLE"]}</li>
-                      ))}
-                    </ul>
-                  )}
+                  <ul>
+                    {tabValue === 0
+                      ? Object.keys(userRecommendations?.nlp[0]).map(
+                          (acc, idx) => <li>{acc}</li>
+                        )
+                      : Object.keys(userRecommendations?.svd[0]).map(
+                          (acc, idx) => <li>{acc}</li>
+                        )}
+                  </ul>
                 </BlockContent>
               </Paper>
             </Grid>
-            {tabValue === 0 && (
-              <Grid item xs={12} sm={12} md={6}>
-                <Paper>
-                  <BlockContent>
-                    <>
-                      <CustomPaper
-                        label={"Accuracy"}
-                        toRound={false}
-                        isMoney={false}
-                        value={""}
-                      />
-                      <ul>
-                        {Object.keys(userRecommendations?.nlp).map(
-                          (acc, idx) => (
-                            <li>
-                              {acc} : {userRecommendations?.nlp[acc]}
-                            </li>
+
+            <Grid item xs={12} sm={12} md={6}>
+              <Paper>
+                <BlockContent>
+                  <>
+                    <CustomPaper
+                      label={"Accuracy"}
+                      toRound={false}
+                      isMoney={false}
+                      value={""}
+                    />
+                    <ul>
+                      {tabValue === 0
+                        ? Object.keys(userRecommendations?.nlp[0]).map(
+                            (acc, idx) => (
+                              <li>
+                                {acc} : {userRecommendations?.nlp[0][acc]}
+                              </li>
+                            )
                           )
-                        )}
-                      </ul>
-                    </>
-                  </BlockContent>
-                </Paper>
-              </Grid>
-            )}
+                        : Object.keys(userRecommendations?.svd[0]).map(
+                            (acc, idx) => (
+                              <li>
+                                {acc} : {userRecommendations?.svd[0][acc]}
+                              </li>
+                            )
+                          )}
+                    </ul>
+                  </>
+                </BlockContent>
+              </Paper>
+            </Grid>
           </Grid>
         </>
       )}

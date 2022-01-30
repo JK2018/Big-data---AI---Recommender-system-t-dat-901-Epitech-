@@ -141,9 +141,6 @@ def get_recommendation_accuracy(recommendations, purchases):
 
 def svdPredict(userId):
     cursor = model2.find_one({'clientId': userId}, {"_id": 0, "clientId": 0})
-    items = []
-    for id in cursor["recommendedItems"]:
-        items.append(getProduct(id))
 
     query2 = {"CLI_ID": int(userId)}
     cursor2 = clientCol.find(query2)
@@ -152,9 +149,10 @@ def svdPredict(userId):
 
     # purchases = client_data.loc[client_data['CLI_ID'] == userID] # request DB here
     p_series = pd.Series(purchases['PROD_ID'])
-    accuracy = get_recommendation_accuracy(items, p_series.tolist())
+    accuracy = get_recommendation_accuracy(
+        cursor["recommendedItems"], p_series.tolist())
 
-    return [items, accuracy]
+    return [accuracy]
 
 
 def getUserRecommendations(userID):
@@ -231,4 +229,4 @@ def getUserRecommendations(userID):
 
     accuracy = get_recommendation_accuracy(recommendations, p_series.tolist())
 
-    return [recommendations, accuracy]
+    return [accuracy]
