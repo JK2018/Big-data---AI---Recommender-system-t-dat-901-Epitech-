@@ -23,4 +23,7 @@ The infrastructure is made in Python with Flask framework
 
 2. Then, you need to install all dependencies `pip install -r requirements.txt`
 
-3. After the project installation is complete, you can launch the app `python run.py`
+3. If you have any missing module during the installtion. Just run the command `pip install name_module`
+
+4. After the project installation is complete, you can launch the app `python run.py`
+
